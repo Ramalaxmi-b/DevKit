@@ -2,10 +2,16 @@
   "manifest_version": 3,
   "name": "Devkit",
   "version": "1.0",
-  "description": 
-  "window resizer is useful to resize your window",
+  "description": "Window resizer is useful to resize your window",
   "permissions": [
-      "activeTab"
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
   ],
   "action": {
       "default_popup": "popup.html",
