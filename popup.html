@@ -20,12 +20,10 @@
       <li class="nav-item">
         <a class="nav-link" id="link-checker-tab" data-toggle="tab" href="#link-checker" role="tab" aria-controls="link-checker" aria-selected="false">Link Checker</a>
       </li>
-      
       <li class="nav-item">
         <a class="nav-link" id="tech-analyzer-tab" data-toggle="tab" href="#tech-analyzer" role="tab" aria-controls="tech-analyzer" aria-selected="false">Tech Analyzer</a>
       </li>
     </ul>
-    
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="window-resizer" role="tabpanel" aria-labelledby="window-resizer-tab">
         <div class="mt-3">
@@ -97,5 +95,71 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('apply-size').addEventListener('click', applySize);
+      document.getElementById('reset-size').addEventListener('click', resetSize);
+      document.getElementById('check-links').addEventListener('click', checkLinks);
+      document.getElementById('analyze-tech').addEventListener('click', analyzeTech);
+    });
+
+    function applySize() {
+      const predefinedSize = document.getElementById('predefined-sizes').value.split('x');
+      const customWidth = document.getElementById('custom-width').value;
+      const customHeight = document.getElementById('custom-height').value;
+      let width = parseInt(predefinedSize[0], 10);
+      let height = parseInt(predefinedSize[1], 10);
+
+      if (customWidth) width = parseInt(customWidth, 10);
+      if (customHeight) height = parseInt(customHeight, 10);
+
+      chrome.windows.getCurrent(function (win) {
+        chrome.windows.update(win.id, { width, height });
+      });
+    }
+
+    function resetSize() {
+      chrome.windows.getCurrent(function (win) {
+        chrome.windows.update(win.id, { width: 800, height: 600 });
+      });
+    }
+
+    function checkLinks() {
+      const url = document.getElementById('page-url').value;
+      fetch(url)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const links = doc.querySelectorAll('a');
+          const results = [];
+          links.forEach(link => {
+            fetch(link.href)
+              .then(response => {
+                if (!response.ok) {
+                  results.push(`${link.href} is broken.`);
+                }
+              })
+              .catch(() => {
+                results.push(`${link.href} is broken.`);
+              });
+          });
+          setTimeout(() => {
+            document.getElementById('link-results').innerText = results.join('\n');
+          }, 3000); 
+        });
+    }
+
+    function analyzeTech() {
+      const url = document.getElementById('tech-url').value;
+      fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`)
+        .then(response => response.json())
+        .then(data => {
+          const technologies = data.technologies;
+          const results = technologies.map(tech => tech.name).join(', ');
+          document.getElementById('tech-results').innerText = results;
+        });
+    }
+  </script>
 </body>
 </html>

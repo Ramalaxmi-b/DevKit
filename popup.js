@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('apply-size').addEventListener('click', applySize);
     document.getElementById('reset-size').addEventListener('click', resetSize);
     document.getElementById('check-links').addEventListener('click', checkLinks);
@@ -78,3 +78,4 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('tech-results').innerText = results;
       });
   }
+*/

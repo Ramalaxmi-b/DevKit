@@ -14,18 +14,16 @@
     "https://*/"
   ],
   "action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-          "16": "logo.jpeg",
-          "48": "logo1.jpeg",
-          "128": "logo2.jpeg"
-      }
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "logo-16x16.png",
+      "32": "logo-32x32.png",
+      "512": "logo-512x512.png"
+    }
   },
   "icons": {
-      "16": "logo.jpeg",
-      "48": "logo1.jpeg",
-      "128": "logo2.jpeg"
+    "16": "logo-16x16.png",
+    "32": "logo-32x32.png",
+    "512": "logo-512x512.png"
   }
 }
-
-  
