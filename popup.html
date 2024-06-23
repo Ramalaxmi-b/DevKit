@@ -46,12 +46,6 @@
           </div>
           <button id="apply-size" class="btn btn-primary btn-block">Apply</button>
           <button id="reset-size" class="btn btn-secondary btn-block">Reset to Default</button>
-          <div class="mt-3 text-center">
-            <span class="tooltip">
-              <i class="fas fa-info-circle"></i>
-              <span class="tooltiptext">Resize the browser window to predefined or custom dimensions.</span>
-            </span>
-          </div>
         </div>
       </div>
       <div class="tab-pane fade" id="link-checker" role="tabpanel" aria-labelledby="link-checker-tab">
@@ -63,12 +57,6 @@
           </div>
           <button id="check-links" class="btn btn-primary btn-block">Check Links</button>
           <div id="link-results" class="mt-3"></div>
-          <div class="mt-3 text-center">
-            <span class="tooltip">
-              <i class="fas fa-info-circle"></i>
-              <span class="tooltiptext">Check for broken links on the specified page.</span>
-            </span>
-          </div>
         </div>
       </div>
       <div class="tab-pane fade" id="tech-analyzer" role="tabpanel" aria-labelledby="tech-analyzer-tab">
@@ -80,86 +68,23 @@
           </div>
           <button id="analyze-tech" class="btn btn-primary btn-block">Analyze Tech</button>
           <div id="tech-results" class="mt-3"></div>
-          <div class="mt-3 text-center">
-            <span class="tooltip">
-              <i class="fas fa-info-circle"></i>
-              <span class="tooltiptext">Analyze the technologies used on the specified page.</span>
-            </span>
-          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+<footer class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted">Devkit &copy; 2024 
+    </span>
+  </div>
+</footer>
 
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('apply-size').addEventListener('click', applySize);
-      document.getElementById('reset-size').addEventListener('click', resetSize);
-      document.getElementById('check-links').addEventListener('click', checkLinks);
-      document.getElementById('analyze-tech').addEventListener('click', analyzeTech);
-    });
-
-    function applySize() {
-      const predefinedSize = document.getElementById('predefined-sizes').value.split('x');
-      const customWidth = document.getElementById('custom-width').value;
-      const customHeight = document.getElementById('custom-height').value;
-      let width = parseInt(predefinedSize[0], 10);
-      let height = parseInt(predefinedSize[1], 10);
-
-      if (customWidth) width = parseInt(customWidth, 10);
-      if (customHeight) height = parseInt(customHeight, 10);
-
-      chrome.windows.getCurrent(function (win) {
-        chrome.windows.update(win.id, { width, height });
-      });
-    }
-
-    function resetSize() {
-      chrome.windows.getCurrent(function (win) {
-        chrome.windows.update(win.id, { width: 800, height: 600 });
-      });
-    }
-
-    function checkLinks() {
-      const url = document.getElementById('page-url').value;
-      fetch(url)
-        .then(response => response.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const links = doc.querySelectorAll('a');
-          const results = [];
-          links.forEach(link => {
-            fetch(link.href)
-              .then(response => {
-                if (!response.ok) {
-                  results.push(`${link.href} is broken.`);
-                }
-              })
-              .catch(() => {
-                results.push(`${link.href} is broken.`);
-              });
-          });
-          setTimeout(() => {
-            document.getElementById('link-results').innerText = results.join('\n');
-          }, 3000); 
-        });
-    }
-
-    function analyzeTech() {
-      const url = document.getElementById('tech-url').value;
-      fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`)
-        .then(response => response.json())
-        .then(data => {
-          const technologies = data.technologies;
-          const results = technologies.map(tech => tech.name).join(', ');
-          document.getElementById('tech-results').innerText = results;
-        });
-    }
-  </script>
+  <script src="popup.js"></script>
 </body>
 </html>

@@ -2,23 +2,14 @@ body {
   padding-top: 20px;
 }
 
-.text {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: Arial, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
 .container {
   max-width: 600px;
   margin: 0 auto;
 }
+
 .nav-tabs {
-  border-bottom: none;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
 }
 
 .nav-link {
@@ -29,24 +20,9 @@ body {
 }
 
 .nav-link.active {
-  background-color: #15ff00;
-  color: #fff;
-}
-
-.nav-tabs {
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 15px;
-}
-
-/*.nav-link {
-  padding: 10px;
-  text-align: center;
-}
-
-.nav-link.active {
   background-color: #007bff;
   color: #fff;
-}*/
+}
 
 .tab-content {
   padding-top: 10px;
@@ -56,45 +32,14 @@ body {
   display: none;
 }
 
+.tab-pane.show {
+  display: block;
+}
+
 .form-group {
   margin-bottom: 15px;
 }
 
 .btn {
   font-size: 16px;
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 150px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -75px;
-}
-
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
 }
