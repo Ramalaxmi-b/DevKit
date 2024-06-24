@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Devkit",
   "version": "1.0",
-  "description": "Window resizer is useful to resize your window",
+  "description": "Devkit: A versatile developer tool for window resizing, link checking, and technology analysis.",
   "permissions": [
     "activeTab",
     "tabs",
@@ -13,6 +13,9 @@
     "http://*/",
     "https://*/"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -25,5 +28,8 @@
     "16": "logo-16x16.png",
     "32": "logo-32x32.png",
     "512": "logo-512x512.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }

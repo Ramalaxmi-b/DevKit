@@ -86,3 +86,7 @@ function analyzeTech() {
       document.getElementById('tech-results').innerText = results;
     });
 }
+
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('Devkit installed.');
+});
