@@ -1,3 +1,5 @@
+// popup.js
+
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('apply-size').addEventListener('click', applySize);
   document.getElementById('reset-size').addEventListener('click', resetSize);
@@ -8,12 +10,21 @@ document.addEventListener('DOMContentLoaded', function () {
   const tablinks = document.querySelectorAll('.nav-link');
   tablinks.forEach(tablink => {
     tablink.addEventListener('click', function(event) {
-      openTab(event, this.getAttribute('href').substring(1));
+      event.preventDefault();
+      openTab(event, this.getAttribute('aria-controls'));
     });
   });
 
   // Set the first tab as active
   tablinks[0].click();
+
+  // Retrieve stored settings on popup open
+  chrome.storage.sync.get(['width', 'height'], function(data) {
+    if (data.width && data.height) {
+      document.getElementById('custom-width').value = data.width;
+      document.getElementById('custom-height').value = data.height;
+    }
+  });
 });
 
 function openTab(evt, tabName) {
@@ -39,14 +50,29 @@ function applySize() {
   if (customWidth) width = parseInt(customWidth, 10);
   if (customHeight) height = parseInt(customHeight, 10);
 
+  // Save settings to storage
+  chrome.storage.sync.set({ width, height }, function() {
+    console.log('Settings saved:', width, height);
+  });
+
+  // Update window size
   chrome.windows.getCurrent(function (win) {
     chrome.windows.update(win.id, { width, height });
   });
 }
 
 function resetSize() {
+  const defaultWidth = 800;
+  const defaultHeight = 600;
+
+  // Save default settings to storage
+  chrome.storage.sync.set({ width: defaultWidth, height: defaultHeight }, function() {
+    console.log('Default settings saved:', defaultWidth, defaultHeight);
+  });
+
+  // Update window size
   chrome.windows.getCurrent(function (win) {
-    chrome.windows.update(win.id, { width: 800, height: 600 });
+    chrome.windows.update(win.id, { width: defaultWidth, height: defaultHeight });
   });
 }
 
@@ -59,8 +85,10 @@ function checkLinks() {
       const doc = parser.parseFromString(html, 'text/html');
       const links = doc.querySelectorAll('a');
       const results = [];
+      const fetchPromises = [];
+
       links.forEach(link => {
-        fetch(link.href)
+        const fetchPromise = fetch(link.href)
           .then(response => {
             if (!response.ok) {
               results.push(`${link.href} is broken.`);
@@ -69,24 +97,37 @@ function checkLinks() {
           .catch(() => {
             results.push(`${link.href} is broken.`);
           });
+        fetchPromises.push(fetchPromise);
       });
-      setTimeout(() => {
-        document.getElementById('link-results').innerText = results.join('\n');
-      }, 3000); 
+
+      Promise.all(fetchPromises).then(() => {
+        if (results.length > 0) {
+          document.getElementById('link-results').innerText = results.join('\n');
+        } else {
+          document.getElementById('link-results').innerText = 'All links are working.';
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching page:', error);
+      document.getElementById('link-results').innerText = 'Error fetching page.';
     });
 }
 
 function analyzeTech() {
   const url = document.getElementById('tech-url').value;
-  fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`)
+  fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`, {
+    headers: {
+      'x-api-key': 'YOUR_WAPPALYZER_API_KEY'
+    }
+  })
     .then(response => response.json())
     .then(data => {
-      const technologies = data.technologies;
-      const results = technologies.map(tech => tech.name).join(', ');
+      const results = data[0].technologies.map(tech => tech.name).join(', ');
       document.getElementById('tech-results').innerText = results;
+    })
+    .catch(error => {
+      console.error('Error fetching technologies:', error);
+      document.getElementById('tech-results').innerText = 'Error fetching technologies.';
     });
 }
-
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('Devkit installed.');
-});
