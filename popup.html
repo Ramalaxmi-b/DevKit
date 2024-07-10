@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,26 +7,21 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
     <div class="container">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="window-resizer-tab" data-toggle="tab" href="#window-resizer" role="tab"
-                    aria-controls="window-resizer" aria-selected="true">Window Resizer</a>
+                <a class="nav-link active" id="window-resizer-tab" data-toggle="tab" href="#window-resizer" role="tab" aria-controls="window-resizer" aria-selected="true">Window Resizer</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="link-checker-tab" data-toggle="tab" href="#link-checker" role="tab"
-                    aria-controls="link-checker" aria-selected="false">Link Checker</a>
+                <a class="nav-link" id="link-checker-tab" data-toggle="tab" href="#link-checker" role="tab" aria-controls="link-checker" aria-selected="false">Link Checker</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="tech-analyzer-tab" data-toggle="tab" href="#tech-analyzer" role="tab"
-                    aria-controls="tech-analyzer" aria-selected="false">Tech Analyzer</a>
+                <a class="nav-link" id="tech-analyzer-tab" data-toggle="tab" href="#tech-analyzer" role="tab" aria-controls="tech-analyzer" aria-selected="false">Tech Analyzer</a>
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="window-resizer" role="tabpanel"
-                aria-labelledby="window-resizer-tab">
+            <div class="tab-pane fade show active" id="window-resizer" role="tabpanel" aria-labelledby="window-resizer-tab">
                 <div class="mt-3">
                     <h2>Window Resizer</h2>
                     <div class="form-group">
@@ -82,11 +76,13 @@
             </a>
         </div>
     </footer>
-
+    <script type="module" src="popup.js"></script>
+    <script type="module" src="resize.js"></script>
+    <script type="module" src="links.js"></script>
+    <script type="module" src="analyze.js"></script>
     <script src="libs/jquery-3.6.0.min.js"></script>
     <script src="libs/popper.min.js"></script>
     <script src="libs/bootstrap.min.js"></script>
-    <script src="popup.js"></script>
+    
 </body>
-
 </html>

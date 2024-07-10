@@ -1,133 +1,118 @@
-// popup.js
+import { applySize, resetSize } from './resize.js';
+import { analyzeTech } from './analyze.js';
+import { checkLinks } from './links.js';
+import { resizeWindowBasedOnContent } from './resize.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('apply-size').addEventListener('click', applySize);
-  document.getElementById('reset-size').addEventListener('click', resetSize);
-  document.getElementById('check-links').addEventListener('click', checkLinks);
-  document.getElementById('analyze-tech').addEventListener('click', analyzeTech);
+// Execute script immediately when popup.html is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  const tabLinks = document.querySelectorAll('.nav-link');
 
   // Initialize tabs
-  const tablinks = document.querySelectorAll('.nav-link');
-  tablinks.forEach(tablink => {
-    tablink.addEventListener('click', function(event) {
+  tabLinks.forEach(tabLink => {
+    tabLink.addEventListener('click', function(event) {
       event.preventDefault();
       openTab(event, this.getAttribute('aria-controls'));
+      resizeWindowBasedOnContent(); // Ensure this function is available and called
     });
   });
 
   // Set the first tab as active
-  tablinks[0].click();
+  tabLinks[0].click();
 
-  // Retrieve stored settings on popup open
+  // Retrieve stored width and height settings
   chrome.storage.sync.get(['width', 'height'], function(data) {
     if (data.width && data.height) {
       document.getElementById('custom-width').value = data.width;
       document.getElementById('custom-height').value = data.height;
     }
   });
+
+  // Apply size button click handler
+  document.getElementById('apply-size').addEventListener('click', function() {
+    applySize();
+  });
+
+  // Reset size button click handler
+  document.getElementById('reset-size').addEventListener('click', function() {
+    resetSize();
+  });
+
+  // Check links button click handler
+  document.getElementById('check-links').addEventListener('click', function() {
+    const pageUrl = document.getElementById('page-url').value.trim();
+    if (pageUrl) {
+      checkLinks(pageUrl);
+    } else {
+      showError('Please enter a valid page URL.');
+    }
+  });
+
+  // Analyze tech button click handler
+  document.getElementById('analyze-tech').addEventListener('click', function() {
+    const techUrl = document.getElementById('tech-url').value.trim();
+    if (techUrl) {
+      analyzeTech(techUrl);
+    } else {
+      showError('Please enter a valid page URL.');
+    }
+  });
+
+  // Resize window based on initial content
+  resizeWindowBasedOnContent();
 });
 
 function openTab(evt, tabName) {
-  const tabcontent = document.querySelectorAll('.tab-pane');
-  tabcontent.forEach(tab => {
-    tab.classList.remove('show', 'active');
+  const tabContents = document.querySelectorAll('.tab-pane');
+  tabContents.forEach(tabContent => {
+    tabContent.classList.remove('show', 'active');
   });
-  const tablinks = document.querySelectorAll('.nav-link');
-  tablinks.forEach(link => {
+
+  const tabLinks = document.querySelectorAll('.nav-link');
+  tabLinks.forEach(link => {
     link.classList.remove('active');
   });
+
   document.getElementById(tabName).classList.add('show', 'active');
   evt.currentTarget.classList.add('active');
 }
 
-function applySize() {
-  const predefinedSize = document.getElementById('predefined-sizes').value.split('x');
-  const customWidth = document.getElementById('custom-width').value;
-  const customHeight = document.getElementById('custom-height').value;
-  let width = parseInt(predefinedSize[0], 10);
-  let height = parseInt(predefinedSize[1], 10);
+// Function to show success message
+export function showSuccess(message) {
+  console.log('Showing success message:', message); // Log message to console for debugging
 
-  if (customWidth) width = parseInt(customWidth, 10);
-  if (customHeight) height = parseInt(customHeight, 10);
+  const messageElement = document.createElement('div');
+  messageElement.className = 'alert alert-success mt-3';
+  messageElement.textContent = message;
 
-  // Save settings to storage
-  chrome.storage.sync.set({ width, height }, function() {
-    console.log('Settings saved:', width, height);
-  });
-
-  // Update window size
-  chrome.windows.getCurrent(function (win) {
-    chrome.windows.update(win.id, { width, height });
-  });
+  const tabContent = document.querySelector('.tab-pane.show.active');
+  if (tabContent) {
+    console.log('Appending success message to tab content:', tabContent);
+    tabContent.appendChild(messageElement);
+    setTimeout(function() {
+      messageElement.remove();
+    }, 3000);
+  } else {
+    console.error('Active tab content not found.'); // Log error if tab content is not found
+  }
 }
 
-function resetSize() {
-  const defaultWidth = 800;
-  const defaultHeight = 600;
+// Function to show error message
+export function showError(message) {
+  console.log('Showing error message:', message); // Log message to console for debugging
 
-  // Save default settings to storage
-  chrome.storage.sync.set({ width: defaultWidth, height: defaultHeight }, function() {
-    console.log('Default settings saved:', defaultWidth, defaultHeight);
-  });
+  const messageElement = document.createElement('div');
+  messageElement.className = 'alert alert-danger mt-3';
+  messageElement.textContent = message;
 
-  // Update window size
-  chrome.windows.getCurrent(function (win) {
-    chrome.windows.update(win.id, { width: defaultWidth, height: defaultHeight });
-  });
+  const tabContent = document.querySelector('.tab-pane.show.active');
+  if (tabContent) {
+    console.log('Appending error message to tab content:', tabContent);
+    tabContent.appendChild(messageElement);
+    setTimeout(function() {
+      messageElement.remove();
+    }, 3000);
+  } else {
+    console.error('Active tab content not found.'); // Log error if tab content is not found
+  }
 }
 
-function checkLinks() {
-  const url = document.getElementById('page-url').value;
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const links = doc.querySelectorAll('a');
-      const results = [];
-      const fetchPromises = [];
-
-      links.forEach(link => {
-        const fetchPromise = fetch(link.href)
-          .then(response => {
-            if (!response.ok) {
-              results.push(`${link.href} is broken.`);
-            }
-          })
-          .catch(() => {
-            results.push(`${link.href} is broken.`);
-          });
-        fetchPromises.push(fetchPromise);
-      });
-
-      Promise.all(fetchPromises).then(() => {
-        if (results.length > 0) {
-          document.getElementById('link-results').innerText = results.join('\n');
-        } else {
-          document.getElementById('link-results').innerText = 'All links are working.';
-        }
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching page:', error);
-      document.getElementById('link-results').innerText = 'Error fetching page.';
-    });
-}
-
-function analyzeTech() {
-  const url = document.getElementById('tech-url').value;
-  fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`, {
-    headers: {
-      'x-api-key': 'YOUR_WAPPALYZER_API_KEY'
-    }
-  })
-    .then(response => response.json())
-    .then(data => {
-      const results = data[0].technologies.map(tech => tech.name).join(', ');
-      document.getElementById('tech-results').innerText = results;
-    })
-    .catch(error => {
-      console.error('Error fetching technologies:', error);
-      document.getElementById('tech-results').innerText = 'Error fetching technologies.';
-    });
-}

@@ -6,6 +6,7 @@
   "permissions": [
     "activeTab",
     "tabs",
+    "windows",
     "scripting",
     "storage"
   ],
@@ -13,9 +14,6 @@
     "http://*/",
     "https://*/"
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -24,7 +22,11 @@
       "128": "128x128.png"
     }
   },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+  },
+  "type": "module"
 }
