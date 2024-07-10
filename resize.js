@@ -5,19 +5,23 @@ export function applySize() {
     let width = parseInt(predefinedSize[0], 10);
     let height = parseInt(predefinedSize[1], 10);
 
+    // Override with custom dimensions if provided
     if (customWidth) width = parseInt(customWidth, 10);
     if (customHeight) height = parseInt(customHeight, 10);
 
+    // Validate dimensions
     if (isNaN(width) || isNaN(height)) {
         console.error('Invalid dimensions:', width, height);
         return Promise.reject('Invalid dimensions');
     }
 
+    // Calculate window position to center on screen
     const screenWidth = screen.availWidth;
     const screenHeight = screen.availHeight;
     const left = Math.max(0, Math.min(screenWidth - width, screenWidth / 2 - width / 2));
     const top = Math.max(0, Math.min(screenHeight - height, screenHeight / 2 - height / 2));
 
+    // Save dimensions to Chrome storage and update window
     return new Promise((resolve, reject) => {
         chrome.storage.sync.set({ width, height }, function() {
             console.log('Settings saved:', width, height);
@@ -42,19 +46,19 @@ export function applySize() {
         });
     });
 }
-
 export function resizeWindowBasedOnContent() {
     const resizeDiv = document.getElementById('resizeDiv');
     if (!resizeDiv) return; // Ensure resizeDiv is available
 
-    const width = resizeDiv.offsetWidth;
-    const height = resizeDiv.offsetHeight;
+    // Get dimensions based on content
+    const width = resizeDiv.offsetWidth + 20;  // Adding padding
+    const height = resizeDiv.offsetHeight + 100; // Adding padding
 
     // Update window size
     chrome.windows.getCurrent(function(window) {
         chrome.windows.update(window.id, {
-            width: width + 20,  // Add some padding
-            height: height + 100 // Add some padding
+            width: width,
+            height: height
         }, function(updatedWindow) {
             if (chrome.runtime.lastError) {
                 console.error('Error resizing window:', chrome.runtime.lastError.message);
@@ -66,12 +70,11 @@ export function resizeWindowBasedOnContent() {
         });
     });
 }
-
-
 export function resetSize() {
     const defaultWidth = 1024;
     const defaultHeight = 768;
 
+    // Save default dimensions to Chrome storage and update window
     return new Promise((resolve, reject) => {
         chrome.storage.sync.set({ width: defaultWidth, height: defaultHeight }, function() {
             console.log('Default settings saved:', defaultWidth, defaultHeight);

@@ -115,4 +115,3 @@ export function showError(message) {
     console.error('Active tab content not found.'); // Log error if tab content is not found
   }
 }
-

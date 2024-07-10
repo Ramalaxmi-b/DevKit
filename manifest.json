@@ -1,32 +1,48 @@
+
 {
   "manifest_version": 3,
   "name": "Devkit",
   "version": "1.0",
   "description": "Devkit: A versatile developer tool for window resizing, link checking, and technology analysis.",
   "permissions": [
-    "activeTab",
-    "tabs",
-    "windows",
-    "scripting",
-    "storage"
-  ],
-  "host_permissions": [
-    "http://*/",
-    "https://*/"
-  ],
+  "activeTab",
+  "tabs",
+  "storage",
+  "scripting",
+  "http://*/",
+  "https://*/"
+],
+"host_permissions": [
+  "http://*/",
+  "https://*/"
+],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "16x16.png",
+     "16": "16x16.png",
       "48": "48x48.png",
       "128": "128x128.png"
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "persistent": false
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self';"
   },
-  "type": "module"
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "options_ui": {
+    "page": "popup.html"
+  },
+  "icons": {
+    "16": "16x16.png",
+      "48": "48x48.png",
+      "128": "128x128.png"
+  }
 }
