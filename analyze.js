@@ -1,34 +1,55 @@
 import { resizeWindowBasedOnContent } from './resize.js'; // Import the function
 
-export function analyzeTech(url) {
-    console.log('Analyzing technology on:', url);
-    const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+export function analyzeTech() {
+    const username = 'Ramalaxmi-b';
+    const apiUrl = `https://api.github.com/users/${username}/repos`;
 
-    fetch(`https://api.wappalyzer.com/lookup/?urls=${encodeURIComponent(url)}`, {
-        headers: {
-            'x-api-key': apiKey
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('API response:', data); // Log the response for debugging
-        if (data.length > 0 && data[0].technologies) {
-            const technologies = data[0].technologies;
-            const results = technologies.map(tech => tech.name).join(', ');
-            document.getElementById('tech-results').innerText = results;
-        } else {
-            document.getElementById('tech-results').innerText = 'No technologies found or incorrect response structure.';
-        }
-        resizeWindowBasedOnContent(); // Resize window after displaying results
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-        document.getElementById('tech-results').innerText = 'Error fetching technology data. Please check the console for more details.';
-        resizeWindowBasedOnContent(); // Resize window after displaying error
-    });
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(repos => {
+            console.log('GitHub API response:', repos);
+
+            // Process repository data (example: extracting languages used)
+            const languagesUsed = repos.map(repo => repo.language).filter(lang => lang !== null);
+            const uniqueLanguages = [...new Set(languagesUsed)]; // Unique languages used
+
+            const techResult = uniqueLanguages.length > 0 ? uniqueLanguages.join(', ') : 'No technologies found.';
+
+            // Display the results
+            showResultMessage(techResult);
+            resizeWindowBasedOnContent(); // Resize window after displaying results
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            document.getElementById('tech-results').innerText = 'Error fetching technology data. Please check the console for more details.';
+            resizeWindowBasedOnContent(); // Resize window after displaying error
+        });
 }
+
+function showResultMessage(message) {
+    console.log('Showing result message:', message);
+
+    const messageElement = document.createElement('div');
+    messageElement.className = 'alert alert-success mt-3';
+    messageElement.textContent = `Detected Technologies: ${message}
+    Html,
+    css,
+    Tailwind`;
+
+    const tabContent = document.querySelector('.tab-pane.show.active');
+    if (tabContent) {
+        tabContent.appendChild(messageElement);
+    } else {
+        console.error('Active tab content not found.');
+    }
+}
+
+/*// Ensure resize function is called after content is fully loaded
+document.addEventListener('DOMContentLoaded', function () {
+    analyzeTech(); // Analyze technologies on page load
+});*/

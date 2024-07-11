@@ -20,12 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
   tabLinks[0].click();
 
   // Retrieve stored width and height settings
-  chrome.storage.sync.get(['width', 'height'], function(data) {
+ /* chrome.storage.sync.get(['width', 'height'], function(data) {
     if (data.width && data.height) {
       document.getElementById('custom-width').value = data.width;
       document.getElementById('custom-height').value = data.height;
     }
-  });
+  });*/
 
   // Apply size button click handler
   document.getElementById('apply-size').addEventListener('click', function() {

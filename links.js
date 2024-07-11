@@ -1,8 +1,10 @@
+import { resizeWindowBasedOnContent } from './resize.js'; // Import the function
+
 export function checkLinks(url) {
   console.log('Checking links on:', url);
   fetch(url)
-    .then(response => response.text())
-    .then(html => {
+   .then(response => response.text())
+   .then(html => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const links = doc.querySelectorAll('a');
@@ -10,31 +12,34 @@ export function checkLinks(url) {
 
       links.forEach(link => {
         const fetchPromise = fetch(link.href)
-          .then(response => {
+         .then(response => {
             if (response.ok) {
-              return `${link.href} is not broken.`;
+              return false; // Not broken
             } else {
-              return `${link.href} is broken.`;
+              return true; // Broken
             }
           })
-          .catch(() => {
-            return `${link.href} is broken.`;
+         .catch(() => {
+            return true; // Broken
           });
         fetchPromises.push(fetchPromise);
       });
 
       Promise.all(fetchPromises).then(results => {
-        const message = results.join('\n');
+        const allNotBroken = results.every(isBroken =>!isBroken);
+        const message = allNotBroken? 'All links are not broken.' : 'Some links are broken.';
         showResultMessage(message);
         resizeWindowBasedOnContent(); // Resize window after displaying results
       });
     })
-    .catch(error => {
+   .catch(error => {
       console.error('Error checking links:', error);
       showError('Error checking links. Please check the console for more details.');
       resizeWindowBasedOnContent(); // Resize window after displaying error
     });
 }
+
+// Helper functions
 
 function showResultMessage(message) {
   console.log('Showing result message:', message);
@@ -67,19 +72,6 @@ function showError(message) {
   } else {
     console.error('Active tab content not found.');
   }
-}
-
-function resizeWindowBasedOnContent() {
-  const body = document.body;
-  const contentHeight = body.scrollHeight;
-  const contentWidth = body.scrollWidth;
-
-  chrome.windows.getCurrent(function (window) {
-    chrome.windows.update(window.id, {
-      width: Math.max(contentWidth, 300), // Ensure minimum width
-      height: Math.max(contentHeight, 200) // Ensure minimum height
-    });
-  });
 }
 
 // Ensure resize function is called after content is fully loaded
