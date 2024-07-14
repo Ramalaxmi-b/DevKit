@@ -1,5 +1,3 @@
-import { resizeWindowBasedOnContent } from './resize.js'; // Import the function
-
 export function analyzeTech() {
     const username = 'Ramalaxmi-b';
     const apiUrl = `https://api.github.com/users/${username}/repos`;
@@ -22,12 +20,11 @@ export function analyzeTech() {
 
             // Display the results
             showResultMessage(techResult);
-            resizeWindowBasedOnContent(); // Resize window after displaying results
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
             document.getElementById('tech-results').innerText = 'Error fetching technology data. Please check the console for more details.';
-            resizeWindowBasedOnContent(); // Resize window after displaying error
+          
         });
 }
 
@@ -48,8 +45,3 @@ function showResultMessage(message) {
         console.error('Active tab content not found.');
     }
 }
-
-/*// Ensure resize function is called after content is fully loaded
-document.addEventListener('DOMContentLoaded', function () {
-    analyzeTech(); // Analyze technologies on page load
-});*/

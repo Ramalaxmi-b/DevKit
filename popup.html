@@ -27,21 +27,23 @@
                     <div class="form-group">
                         <label for="predefined-sizes">Predefined Sizes:</label>
                         <select id="predefined-sizes" class="form-control">
+                            <option value="320x568">320x568</option>
+                            <option value="375x667">375x667</option>
                             <option value="1024x768">1024x768</option>
                             <option value="1366x768">1366x768</option>
                             <option value="1920x1080">1920x1080</option>
+                            <option value="1680x1050">1680x1050</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="custom-width">Width (px):</label>
-                        <input type="number" id="custom-width" class="form-control">
+                        <input type="text" id="width" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="custom-height">Height (px):</label>
-                        <input type="number" id="custom-height" class="form-control">
+                        <input type="text" id="height" class="form-control">
                     </div>
-                    <button id="apply-size" class="btn btn-primary btn-block">Apply</button>
-                    <button id="reset-size" class="btn btn-secondary btn-block">Reset to Default</button>
+                    <button id="resize-btn" class="btn btn-primary btn-block">Resize Window</button>
                 </div>
             </div>
             <div class="tab-pane fade" id="link-checker" role="tabpanel" aria-labelledby="link-checker-tab">
@@ -83,6 +85,5 @@
     <script src="libs/jquery-3.6.0.min.js"></script>
     <script src="libs/popper.min.js"></script>
     <script src="libs/bootstrap.min.js"></script>
-    
 </body>
 </html>

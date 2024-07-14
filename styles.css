@@ -1,10 +1,9 @@
-/* Global styles */
 body {
   background-color:  #e8ecd6;
   padding: 20px;
-  width: 350px; /* Allowing dynamic width */
-  max-width: 600px; /* Allowing maximum width */
-  min-width: 300px; /* Allowing minimum width for better visibility */
+  width: 350px;
+  max-width: 600px; 
+  min-width: 300px; 
   font-family: Arial, sans-serif;
   color: #13445a;
 }
